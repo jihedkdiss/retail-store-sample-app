@@ -39,7 +39,7 @@ module "catalog_opensearch" {
   engine_version = "OpenSearch_3.3"
 
   cluster_config = {
-    instance_type            = "r8g.medium.search"
+    instance_type            = var.opensearch_instance_type
     instance_count           = 1
     zone_awareness_enabled   = false
     dedicated_master_enabled = false
@@ -47,7 +47,7 @@ module "catalog_opensearch" {
 
   ebs_options = {
     ebs_enabled = true
-    volume_size = 50
+    volume_size = var.opensearch_volume_size
     volume_type = "gp3"
   }
 

@@ -13,6 +13,8 @@ module "ui_service" {
   healthcheck_path                = "/actuator/health"
   alb_target_group_arn            = element(module.alb.target_group_arns, 0)
   opentelemetry_enabled           = var.opentelemetry_enabled
+  task_cpu                        = var.task_cpu
+  task_memory                     = var.task_memory
 
 
   environment_variables = {

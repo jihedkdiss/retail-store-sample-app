@@ -39,3 +39,27 @@ variable "allowed_security_group_ids" {
   default     = []
   description = "List of additional allowed security group IDs"
 }
+
+variable "mq_instance_type" {
+  type        = string
+  default     = "mq.m5.large"
+  description = "Amazon MQ broker instance type"
+}
+
+variable "opensearch_instance_type" {
+  type        = string
+  default     = "r8g.medium.search"
+  description = "OpenSearch data node instance type"
+}
+
+variable "opensearch_volume_size" {
+  type        = number
+  default     = 50
+  description = "OpenSearch EBS volume size (GiB)"
+}
+
+variable "rds_instance_class" {
+  type        = string
+  default     = "db.t3.medium"
+  description = "Instance class for the catalog and orders Aurora clusters"
+}

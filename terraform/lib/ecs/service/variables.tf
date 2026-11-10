@@ -84,3 +84,15 @@ variable "opentelemetry_enabled" {
   description = "Boolean value that enables OpenTelemetry."
   type        = bool
 }
+
+variable "task_cpu" {
+  description = "Fargate task CPU units"
+  default     = "1024"
+  type        = string
+}
+
+variable "task_memory" {
+  description = "Fargate task memory (MiB)"
+  default     = "2048"
+  type        = string
+}

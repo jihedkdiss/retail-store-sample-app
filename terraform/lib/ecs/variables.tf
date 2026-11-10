@@ -162,3 +162,15 @@ variable "lifecycle_events_enabled" {
   default     = false
   description = "Enable ECS lifecycle events to CloudWatch Logs"
 }
+
+variable "task_cpu" {
+  type        = string
+  default     = "1024"
+  description = "Fargate task CPU units for every service"
+}
+
+variable "task_memory" {
+  type        = string
+  default     = "2048"
+  description = "Fargate task memory (MiB) for every service"
+}

@@ -24,6 +24,11 @@ module "dependencies" {
   catalog_security_group_id  = module.retail_app_ecs.catalog_security_group_id
   orders_security_group_id   = module.retail_app_ecs.orders_security_group_id
   checkout_security_group_id = module.retail_app_ecs.checkout_security_group_id
+
+  mq_instance_type         = var.mq_instance_type
+  opensearch_instance_type = var.opensearch_instance_type
+  opensearch_volume_size   = var.opensearch_volume_size
+  rds_instance_class       = var.rds_instance_class
 }
 
 module "retail_app_ecs" {
@@ -38,6 +43,8 @@ module "retail_app_ecs" {
   opentelemetry_enabled      = var.opentelemetry_enabled
   container_insights_setting = var.container_insights_setting
   lifecycle_events_enabled   = var.lifecycle_events_enabled
+  task_cpu                   = var.task_cpu
+  task_memory                = var.task_memory
 
   catalog_db_endpoint         = module.dependencies.catalog_db_endpoint
   catalog_db_port             = module.dependencies.catalog_db_port

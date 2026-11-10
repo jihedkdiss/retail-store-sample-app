@@ -11,6 +11,8 @@ module "checkout_service" {
   service_discovery_namespace_arn = aws_service_discovery_private_dns_namespace.this.arn
   cloudwatch_logs_group_id        = aws_cloudwatch_log_group.ecs_tasks.id
   opentelemetry_enabled           = var.opentelemetry_enabled
+  task_cpu                        = var.task_cpu
+  task_memory                     = var.task_memory
 
   environment_variables = {
     RETAIL_CHECKOUT_PERSISTENCE_PROVIDER  = "redis"
