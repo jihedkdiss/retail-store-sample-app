@@ -40,3 +40,5 @@ screenshots
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+# Terraform saved plans (contain secrets)
+*.tfplan
