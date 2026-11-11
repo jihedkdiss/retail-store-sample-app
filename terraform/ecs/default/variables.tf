@@ -96,6 +96,7 @@ variable "datadog" {
     api_key_secret_arn = optional(string)
     env                = optional(string, "dev")
     appsec_enabled     = optional(bool, false)
+    iast_enabled       = optional(bool, false)
     logs_enabled       = optional(bool, false)
   })
   default = { enabled = false }

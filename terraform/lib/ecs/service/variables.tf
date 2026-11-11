@@ -112,6 +112,7 @@ variable "datadog" {
     env                = optional(string, "dev")
     apm_language       = optional(string)
     appsec_enabled     = optional(bool, false)
+    iast_enabled       = optional(bool, false)
     logs_enabled       = optional(bool, false)
   })
   default = { enabled = false }

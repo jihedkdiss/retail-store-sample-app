@@ -17,6 +17,8 @@ locals {
     # Keep a single tracer per process: the Node service starts its OTel SDK unconditionally.
     local.datadog_tracer_injected ? { OTEL_SDK_DISABLED = "true" } : {},
     local.datadog_tracer_injected && var.datadog.appsec_enabled ? { DD_APPSEC_ENABLED = "true" } : {},
+    # Runtime Code Analysis (IAST): Java >= 1.15 / Node dd-trace >= 5.0; not available for Go.
+    local.datadog_tracer_injected && var.datadog.iast_enabled ? { DD_IAST_ENABLED = "true" } : {},
     # OTel-instrumented services: give spans the same env/version tags as the DD tracer.
     local.datadog_tracer_injected ? {} : {
       OTEL_RESOURCE_ATTRIBUTES = "deployment.environment.name=${var.datadog.env},deployment.environment=${var.datadog.env},service.version=${local.image_tag}"
