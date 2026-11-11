@@ -71,7 +71,7 @@ locals {
     healthCheck = {
       command     = ["CMD-SHELL", "curl -f http://localhost:8080${var.healthcheck_path} || exit 1"]
       interval    = 10
-      startPeriod = 60
+      startPeriod = local.datadog_tracer_injected ? 120 : 60 # injected tracer + AppSec slow JVM/Node startup
       retries     = 3
       timeout     = 5
     }
