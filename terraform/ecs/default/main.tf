@@ -72,3 +72,16 @@ module "retail_app_ecs" {
   mq_username = module.dependencies.mq_user
   mq_password = module.dependencies.mq_password
 }
+
+module "load_generator" {
+  source = "../../lib/load-generator"
+  count  = var.load_generator.enabled ? 1 : 0
+
+  environment_name = var.environment_name
+  cluster_arn      = module.retail_app_ecs.cluster_arn
+  vpc_id           = module.vpc.inner.vpc_id
+  subnet_ids       = module.vpc.inner.private_subnets
+  target_url       = module.retail_app_ecs.ui_service_url
+  users_per_minute = var.load_generator.users_per_minute
+  tags             = module.tags.result
+}

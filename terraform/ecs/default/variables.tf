@@ -100,3 +100,12 @@ variable "datadog" {
   })
   default = { enabled = false }
 }
+
+variable "load_generator" {
+  description = "Continuous synthetic traffic against the UI (Artillery scenario from src/load-generator)"
+  type = object({
+    enabled          = bool
+    users_per_minute = optional(number, 6)
+  })
+  default = { enabled = false }
+}
