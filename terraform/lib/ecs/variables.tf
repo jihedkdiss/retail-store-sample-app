@@ -174,3 +174,16 @@ variable "task_memory" {
   default     = "2048"
   description = "Fargate task memory (MiB) for every service"
 }
+
+variable "datadog" {
+  description = "Datadog settings shared by all services (see lib/ecs/service variable 'datadog')"
+  type = object({
+    enabled            = bool
+    site               = optional(string, "datadoghq.com")
+    api_key_secret_arn = optional(string)
+    env                = optional(string, "dev")
+    appsec_enabled     = optional(bool, false)
+    logs_enabled       = optional(bool, false)
+  })
+  default = { enabled = false }
+}

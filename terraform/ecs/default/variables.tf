@@ -87,3 +87,16 @@ variable "aws_region" {
   default     = "eu-west-3"
   description = "AWS region to deploy into"
 }
+
+variable "datadog" {
+  description = "Datadog Agent/APM/logs for the ECS services. api_key_secret_arn must reference an existing Secrets Manager secret."
+  type = object({
+    enabled            = bool
+    site               = optional(string, "datadoghq.com")
+    api_key_secret_arn = optional(string)
+    env                = optional(string, "dev")
+    appsec_enabled     = optional(bool, false)
+    logs_enabled       = optional(bool, false)
+  })
+  default = { enabled = false }
+}

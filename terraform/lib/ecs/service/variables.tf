@@ -96,3 +96,33 @@ variable "task_memory" {
   default     = "2048"
   type        = string
 }
+
+variable "datadog" {
+  description = <<-EOT
+    Datadog instrumentation for this service. When enabled, the task definition is built by
+    Datadog's ecs_fargate module (Agent sidecar, optional tracer injection and FireLens logs)
+    instead of the upstream definition, and the CloudWatch agent sidecar is not used.
+      - apm_language: "java" or "js" injects the Datadog tracer; null keeps the app's
+        built-in OpenTelemetry and sends OTLP to the Agent instead (e.g. Go).
+  EOT
+  type = object({
+    enabled            = bool
+    site               = optional(string, "datadoghq.com")
+    api_key_secret_arn = optional(string)
+    env                = optional(string, "dev")
+    apm_language       = optional(string)
+    appsec_enabled     = optional(bool, false)
+    logs_enabled       = optional(bool, false)
+  })
+  default = { enabled = false }
+
+  validation {
+    condition     = !var.datadog.enabled || var.datadog.api_key_secret_arn != null
+    error_message = "datadog.api_key_secret_arn is required when datadog.enabled is true."
+  }
+
+  validation {
+    condition     = var.datadog.apm_language == null || contains(["java", "js"], coalesce(var.datadog.apm_language, "none"))
+    error_message = "datadog.apm_language must be \"java\", \"js\" or null."
+  }
+}

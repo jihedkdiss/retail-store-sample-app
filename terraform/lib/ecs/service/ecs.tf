@@ -4,7 +4,7 @@ locals {
       "name" : k,
       "value" : v
     }],
-    var.opentelemetry_enabled ? [
+    local.otel_enabled ? [
       {
         "name" : "OTEL_SDK_DISABLED",
         "value" : "false"
@@ -37,7 +37,11 @@ locals {
         "name" : "OTEL_SERVICE_NAME",
         "value" : var.service_name
       }
-    ] : []
+    ] : [],
+    [for k, v in local.datadog_app_environment : {
+      "name" : k,
+      "value" : v
+    }]
   ))
 
   secrets = jsonencode([for k, v in var.secrets : {
@@ -116,13 +120,15 @@ locals {
 
   containers = concat(
     [local.base_container],
-    var.opentelemetry_enabled ? [local.otel_container] : []
+    var.opentelemetry_enabled && !var.datadog.enabled ? [local.otel_container] : []
   )
 }
 
 data "aws_region" "current" {}
 
 resource "aws_ecs_task_definition" "this" {
+  count = var.datadog.enabled ? 0 : 1
+
   family                   = "${var.environment_name}-${var.service_name}"
   container_definitions    = jsonencode(local.containers)
   requires_compatibilities = ["FARGATE"]
@@ -133,10 +139,15 @@ resource "aws_ecs_task_definition" "this" {
   task_role_arn            = aws_iam_role.task_role.arn
 }
 
+moved {
+  from = aws_ecs_task_definition.this
+  to   = aws_ecs_task_definition.this[0]
+}
+
 resource "aws_ecs_service" "this" {
   name                   = var.service_name
   cluster                = var.cluster_arn
-  task_definition        = aws_ecs_task_definition.this.arn
+  task_definition        = var.datadog.enabled ? module.datadog_task_definition[0].arn : aws_ecs_task_definition.this[0].arn
   desired_count          = 1
   launch_type            = "FARGATE"
   enable_execute_command = true

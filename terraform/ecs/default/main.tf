@@ -45,6 +45,7 @@ module "retail_app_ecs" {
   lifecycle_events_enabled   = var.lifecycle_events_enabled
   task_cpu                   = var.task_cpu
   task_memory                = var.task_memory
+  datadog                    = var.datadog
 
   catalog_db_endpoint         = module.dependencies.catalog_db_endpoint
   catalog_db_port             = module.dependencies.catalog_db_port

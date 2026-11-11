@@ -13,6 +13,7 @@ module "catalog_service" {
   opentelemetry_enabled           = var.opentelemetry_enabled
   task_cpu                        = var.task_cpu
   task_memory                     = var.task_memory
+  datadog                         = merge(var.datadog, { apm_language = local.datadog_apm_language["catalog"] })
 
   environment_variables = {
     RETAIL_CATALOG_PERSISTENCE_PROVIDER = "mysql"
