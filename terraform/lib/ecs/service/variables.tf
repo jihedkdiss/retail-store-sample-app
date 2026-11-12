@@ -127,3 +127,24 @@ variable "datadog" {
     error_message = "datadog.apm_language must be \"java\", \"js\" or null."
   }
 }
+
+variable "application_signals" {
+  description = <<-EOT
+    CloudWatch Application Signals for this service (alternative to Datadog; do not enable both).
+      - language: "java" or "js" injects the ADOT auto-instrumentation; null keeps the app's
+        own OpenTelemetry SDK and points its traces at the CloudWatch agent (e.g. Go).
+  EOT
+  type = object({
+    enabled      = bool
+    language     = optional(string)
+    env          = optional(string, "dev")
+    java_version = optional(string, "v2.31.0")
+    node_version = optional(string, "v0.12.0")
+  })
+  default = { enabled = false }
+
+  validation {
+    condition     = !(var.application_signals.enabled && var.datadog.enabled)
+    error_message = "application_signals and datadog cannot both be enabled on a service (one tracer per process)."
+  }
+}

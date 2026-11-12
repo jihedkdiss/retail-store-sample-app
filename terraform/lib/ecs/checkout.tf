@@ -14,6 +14,7 @@ module "checkout_service" {
   task_cpu                        = var.task_cpu
   task_memory                     = var.task_memory
   datadog                         = merge(var.datadog, { apm_language = local.datadog_apm_language["checkout"] })
+  application_signals             = merge(var.application_signals, { language = local.datadog_apm_language["checkout"] })
 
   environment_variables = {
     RETAIL_CHECKOUT_PERSISTENCE_PROVIDER  = "redis"

@@ -188,3 +188,12 @@ variable "datadog" {
   })
   default = { enabled = false }
 }
+
+variable "application_signals" {
+  description = "CloudWatch Application Signals for all services (alternative to Datadog)"
+  type = object({
+    enabled = bool
+    env     = optional(string, "dev")
+  })
+  default = { enabled = false }
+}

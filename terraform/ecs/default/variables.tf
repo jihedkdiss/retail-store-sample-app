@@ -110,3 +110,12 @@ variable "load_generator" {
   })
   default = { enabled = false }
 }
+
+variable "application_signals" {
+  description = "CloudWatch Application Signals (ADOT + CloudWatch agent sidecar). Mutually exclusive with datadog."
+  type = object({
+    enabled = bool
+    env     = optional(string, "dev")
+  })
+  default = { enabled = false }
+}

@@ -41,6 +41,10 @@ locals {
     [for k, v in local.datadog_app_environment : {
       "name" : k,
       "value" : v
+    }],
+    [for k, v in local.appsignals_app_environment : {
+      "name" : k,
+      "value" : v
     }]
   ))
 
@@ -71,7 +75,7 @@ locals {
     healthCheck = {
       command     = ["CMD-SHELL", "curl -f http://localhost:8080${var.healthcheck_path} || exit 1"]
       interval    = 10
-      startPeriod = local.datadog_tracer_injected ? 120 : 60 # injected tracer + AppSec slow JVM/Node startup
+      startPeriod = local.datadog_tracer_injected || local.appsignals_injected ? 120 : 60 # injected tracer + AppSec slow JVM/Node startup
       retries     = 3
       timeout     = 5
     }
@@ -118,9 +122,17 @@ locals {
     }
   }
 
+  # With Application Signals the app container waits for the ADOT init copy and mounts its volume.
+  # (jsonencode/jsondecode keeps both branches the same type for Terraform)
+  app_container = merge(local.base_container, jsondecode(local.appsignals_injected ? jsonencode({
+    mountPoints = local.appsignals_mounts
+    dependsOn   = [{ containerName = "otel-init", condition = "SUCCESS" }]
+  }) : "{}"))
+
   containers = concat(
-    [local.base_container],
-    var.opentelemetry_enabled && !var.datadog.enabled ? [local.otel_container] : []
+    [local.app_container],
+    var.opentelemetry_enabled && !var.datadog.enabled && !local.appsignals_enabled ? [local.otel_container] : [],
+    local.appsignals_containers
   )
 }
 
@@ -137,6 +149,13 @@ resource "aws_ecs_task_definition" "this" {
   memory                   = var.task_memory
   execution_role_arn       = aws_iam_role.task_execution_role.arn
   task_role_arn            = aws_iam_role.task_role.arn
+
+  dynamic "volume" {
+    for_each = local.appsignals_injected ? [1] : []
+    content {
+      name = "otel-auto-instrumentation"
+    }
+  }
 }
 
 moved {

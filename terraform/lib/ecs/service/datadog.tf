@@ -8,7 +8,7 @@ locals {
 
   # Use the app's built-in OpenTelemetry when explicitly enabled (upstream behaviour)
   # or when Datadog is on but no Datadog tracer can be injected (Go).
-  otel_enabled = var.opentelemetry_enabled || (var.datadog.enabled && !local.datadog_tracer_injected)
+  otel_enabled = var.opentelemetry_enabled || (var.datadog.enabled && !local.datadog_tracer_injected) || (var.application_signals.enabled && var.application_signals.language == null)
 
   image_tag    = element(split(":", var.container_image), length(split(":", var.container_image)) - 1)
   cluster_name = element(split("/", var.cluster_arn), length(split("/", var.cluster_arn)) - 1)

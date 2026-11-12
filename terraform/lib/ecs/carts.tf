@@ -15,6 +15,7 @@ module "carts_service" {
   task_cpu                        = var.task_cpu
   task_memory                     = var.task_memory
   datadog                         = merge(var.datadog, { apm_language = local.datadog_apm_language["carts"] })
+  application_signals             = merge(var.application_signals, { language = local.datadog_apm_language["carts"] })
 
   environment_variables = {
     RETAIL_CART_PERSISTENCE_PROVIDER            = "dynamodb"
