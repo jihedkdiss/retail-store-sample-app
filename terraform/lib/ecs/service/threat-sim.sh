@@ -2,6 +2,8 @@
 # Runs only when var.datadog.threat_simulation is true. Prints labels only, never secrets.
 # Loaded with Terraform file() (no interpolation), so shell ${...} is passed through as-is.
 set +e
+# Let the app container start first: the task shares 0.5 vCPU and the JVM health check is tight.
+sleep 180
 echo "[threat-sim] package manager in container"
 dnf install -y -q procps-ng >/dev/null 2>&1
 while true; do

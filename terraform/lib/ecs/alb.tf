@@ -21,6 +21,12 @@ module "alb" {
 
   load_balancer_type = "application"
 
+  # Plain "ip" in X-Forwarded-For (no ":port"), so tracers / WAFs resolve the real client IP.
+  enable_xff_client_port = false
+
+  # Optional access logs (Cloud SIEM source); {} disables them
+  access_logs = var.alb_access_logs
+
   vpc_id          = var.vpc_id
   subnets         = var.public_subnet_ids
   security_groups = [module.alb_sg.security_group_id]

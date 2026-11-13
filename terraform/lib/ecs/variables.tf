@@ -199,3 +199,9 @@ variable "application_signals" {
   })
   default = { enabled = false }
 }
+
+variable "alb_access_logs" {
+  description = "ALB access_logs block ({ bucket, prefix, enabled }); {} disables access logs"
+  type        = map(any)
+  default     = {}
+}

@@ -20,6 +20,13 @@ locals {
     local.datadog_tracer_injected && var.datadog.appsec_enabled ? { DD_APPSEC_ENABLED = "true" } : {},
     # Runtime Code Analysis (IAST): Java >= 1.15 / Node dd-trace >= 5.0; not available for Go.
     local.datadog_tracer_injected && var.datadog.iast_enabled ? { DD_IAST_ENABLED = "true" } : {},
+    # Java: analyse every request (default samples ~30%) so short tests still surface findings.
+    local.datadog_tracer_injected && var.datadog.iast_enabled && var.datadog.apm_language == "java" ? { DD_IAST_DETECTION_MODE = "FULL" } : {},
+    # Log the active tracer configuration (AppSec / IAST status) at startup.
+    local.datadog_tracer_injected ? { DD_TRACE_STARTUP_LOGS = "true" } : {},
+    # Node: the app builds OTel auto-instrumentations even with the SDK disabled; turn them off
+    # so they do not hook modules alongside dd-trace.
+    local.datadog_tracer_injected && var.datadog.apm_language == "js" ? { OTEL_NODE_ENABLED_INSTRUMENTATIONS = "none" } : {},
     # OTel-instrumented services: give spans the same env/version tags as the DD tracer.
     local.datadog_tracer_injected ? {} : {
       OTEL_RESOURCE_ATTRIBUTES = "deployment.environment.name=${var.datadog.env},deployment.environment=${var.datadog.env},service.version=${local.image_tag}"

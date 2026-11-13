@@ -47,6 +47,7 @@ module "retail_app_ecs" {
   task_memory                = var.task_memory
   datadog                    = var.datadog
   application_signals        = var.application_signals
+  alb_access_logs            = var.security_logs.enabled ? module.security_logs[0].alb_access_logs : {}
 
   catalog_db_endpoint         = module.dependencies.catalog_db_endpoint
   catalog_db_port             = module.dependencies.catalog_db_port
@@ -85,4 +86,17 @@ module "load_generator" {
   target_url       = module.retail_app_ecs.ui_service_url
   users_per_minute = var.load_generator.users_per_minute
   tags             = module.tags.result
+}
+
+module "security_logs" {
+  source = "../../lib/security-logs"
+  count  = var.security_logs.enabled ? 1 : 0
+
+  environment_name           = var.environment_name
+  tags                       = module.tags.result
+  vpc_id                     = module.vpc.inner.vpc_id
+  retention_days             = var.security_logs.retention_days
+  datadog_api_key_secret_arn = var.datadog.api_key_secret_arn
+  datadog_site               = var.datadog.site
+  datadog_env                = var.datadog.env
 }

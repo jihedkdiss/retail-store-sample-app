@@ -121,3 +121,12 @@ variable "application_signals" {
   })
   default = { enabled = false }
 }
+
+variable "security_logs" {
+  description = "CloudTrail, ALB access logs and VPC Flow Logs shipped to Datadog (Cloud SIEM) via the Datadog Forwarder. Requires datadog.api_key_secret_arn."
+  type = object({
+    enabled        = bool
+    retention_days = optional(number, 7)
+  })
+  default = { enabled = false }
+}
