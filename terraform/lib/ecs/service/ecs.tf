@@ -127,10 +127,23 @@ locals {
   app_container = merge(local.base_container, jsondecode(local.appsignals_injected ? jsonencode({
     mountPoints = local.appsignals_mounts
     dependsOn   = [{ containerName = "otel-init", condition = "SUCCESS" }]
-  }) : "{}"))
+    }) : "{}"),
+    # Workload Protection only wraps containers that declare an entryPoint.
+    jsondecode(local.workload_protection ? jsonencode({ entryPoint = var.datadog.entry_point }) : "{}")
+  )
+
+  # Harmless attacker-technique replay for Workload Protection demos (see threat-sim.sh).
+  threat_sim_container = {
+    name       = "threat-sim"
+    image      = "public.ecr.aws/amazonlinux/amazonlinux:2023"
+    essential  = false
+    cpu        = 0
+    entryPoint = ["/bin/bash", "-c", file("${path.module}/threat-sim.sh")]
+  }
 
   containers = concat(
     [local.app_container],
+    local.workload_protection && var.datadog.threat_simulation ? [local.threat_sim_container] : [],
     var.opentelemetry_enabled && !var.datadog.enabled && !local.appsignals_enabled ? [local.otel_container] : [],
     local.appsignals_containers
   )

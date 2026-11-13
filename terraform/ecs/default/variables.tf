@@ -91,13 +91,15 @@ variable "aws_region" {
 variable "datadog" {
   description = "Datadog Agent/APM/logs for the ECS services. api_key_secret_arn must reference an existing Secrets Manager secret."
   type = object({
-    enabled            = bool
-    site               = optional(string, "datadoghq.com")
-    api_key_secret_arn = optional(string)
-    env                = optional(string, "dev")
-    appsec_enabled     = optional(bool, false)
-    iast_enabled       = optional(bool, false)
-    logs_enabled       = optional(bool, false)
+    enabled                     = bool
+    site                        = optional(string, "datadoghq.com")
+    api_key_secret_arn          = optional(string)
+    env                         = optional(string, "dev")
+    appsec_enabled              = optional(bool, false)
+    iast_enabled                = optional(bool, false)
+    logs_enabled                = optional(bool, false)
+    workload_protection_enabled = optional(bool, false)
+    threat_simulation           = optional(bool, false)
   })
   default = { enabled = false }
 }

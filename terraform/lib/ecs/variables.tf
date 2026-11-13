@@ -178,13 +178,15 @@ variable "task_memory" {
 variable "datadog" {
   description = "Datadog settings shared by all services (see lib/ecs/service variable 'datadog')"
   type = object({
-    enabled            = bool
-    site               = optional(string, "datadoghq.com")
-    api_key_secret_arn = optional(string)
-    env                = optional(string, "dev")
-    appsec_enabled     = optional(bool, false)
-    iast_enabled       = optional(bool, false)
-    logs_enabled       = optional(bool, false)
+    enabled                     = bool
+    site                        = optional(string, "datadoghq.com")
+    api_key_secret_arn          = optional(string)
+    env                         = optional(string, "dev")
+    appsec_enabled              = optional(bool, false)
+    iast_enabled                = optional(bool, false)
+    logs_enabled                = optional(bool, false)
+    workload_protection_enabled = optional(bool, false)
+    threat_simulation           = optional(bool, false)
   })
   default = { enabled = false }
 }

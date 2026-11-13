@@ -104,16 +104,24 @@ variable "datadog" {
     instead of the upstream definition, and the CloudWatch agent sidecar is not used.
       - apm_language: "java" or "js" injects the Datadog tracer; null keeps the app's
         built-in OpenTelemetry and sends OTLP to the Agent instead (e.g. Go).
+      - workload_protection_enabled: Datadog Workload Protection (CWS, eBPF-less) wraps
+        entry_point with cws-instrumentation (ptrace) so process/file activity is monitored.
+      - entry_point: the image's ENTRYPOINT, restated so the CWS wrapper can prefix it.
+      - threat_simulation: adds a non-essential "threat-sim" container that periodically
+        replays harmless attacker techniques so Workload Protection has something to detect.
   EOT
   type = object({
-    enabled            = bool
-    site               = optional(string, "datadoghq.com")
-    api_key_secret_arn = optional(string)
-    env                = optional(string, "dev")
-    apm_language       = optional(string)
-    appsec_enabled     = optional(bool, false)
-    iast_enabled       = optional(bool, false)
-    logs_enabled       = optional(bool, false)
+    enabled                     = bool
+    site                        = optional(string, "datadoghq.com")
+    api_key_secret_arn          = optional(string)
+    env                         = optional(string, "dev")
+    apm_language                = optional(string)
+    appsec_enabled              = optional(bool, false)
+    iast_enabled                = optional(bool, false)
+    logs_enabled                = optional(bool, false)
+    workload_protection_enabled = optional(bool, false)
+    entry_point                 = optional(list(string))
+    threat_simulation           = optional(bool, false)
   })
   default = { enabled = false }
 

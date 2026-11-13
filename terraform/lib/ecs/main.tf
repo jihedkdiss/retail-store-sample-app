@@ -13,4 +13,13 @@ locals {
     checkout = "js"
     catalog  = null
   }
+
+  # Image ENTRYPOINTs (src/*/Dockerfile), restated for the Workload Protection ptrace wrapper
+  app_entry_point = {
+    ui       = ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
+    carts    = ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
+    orders   = ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
+    checkout = ["node", "dist/main.js"]
+    catalog  = ["/app/main"]
+  }
 }

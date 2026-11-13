@@ -15,7 +15,7 @@ module "ui_service" {
   opentelemetry_enabled           = var.opentelemetry_enabled
   task_cpu                        = var.task_cpu
   task_memory                     = var.task_memory
-  datadog                         = merge(var.datadog, { apm_language = local.datadog_apm_language["ui"] })
+  datadog                         = merge(var.datadog, { apm_language = local.datadog_apm_language["ui"], entry_point = local.app_entry_point["ui"] })
   application_signals             = merge(var.application_signals, { language = local.datadog_apm_language["ui"] })
 
 

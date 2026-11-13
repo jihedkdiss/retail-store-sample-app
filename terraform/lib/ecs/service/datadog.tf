@@ -5,6 +5,7 @@
 
 locals {
   datadog_tracer_injected = var.datadog.enabled && var.datadog.apm_language != null
+  workload_protection     = var.datadog.enabled && var.datadog.workload_protection_enabled && var.datadog.entry_point != null
 
   # Use the app's built-in OpenTelemetry when explicitly enabled (upstream behaviour)
   # or when Datadog is on but no Datadog tracer can be injected (Go).
@@ -53,6 +54,11 @@ module "datadog_task_definition" {
   dd_tags           = "app:retail-store"
 
   dd_apm = { enabled = true }
+
+  # Workload Protection (CWS) on Fargate: eBPF-less, ptrace wrapper on each container entryPoint.
+  # The module requires the app containers to wait for a healthy Agent in this mode.
+  dd_cws                           = { enabled = local.workload_protection }
+  dd_is_datadog_dependency_enabled = local.workload_protection
 
   dd_apm_instrumentation = local.datadog_tracer_injected ? {
     language       = var.datadog.apm_language
